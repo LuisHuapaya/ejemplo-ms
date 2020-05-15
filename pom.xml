@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.2.7.RELEASE</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>com.luishuapaya</groupId>
+	<artifactId>ejemplo-ms</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
+	<name>ejmplo-ms</name>
+	<description>MS ejemplo Luis Huapaya</description>
+
+	<properties>
+		<java.version>1.8</java.version>
+		<spring-cloud.version>Hoxton.SR4</spring-cloud.version>
+		<docker.image.prefix>desarrollo</docker.image.prefix>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-tomcat</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-config</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.junit.vintage</groupId>
+					<artifactId>junit-vintage-engine</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>  
+    		<groupId>org.springframework.boot</groupId>
+    		<artifactId>spring-boot-starter-undertow</artifactId>
+		</dependency> 
+		<!-- Spring Boot Actuator lo que nos permitirá monitorizar aspectos como salud y configuración de nuestra aplicación --> 
+		<dependency>  
+    		<groupId>org.springframework.boot</groupId>
+    		<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency> 
+	</dependencies>
+	
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring-cloud.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<build>
+
+		<finalName>${project.artifactId}</finalName>
+
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>com.spotify</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<version>0.4.10</version>
+				<configuration>
+					<imageName>${docker.image.prefix}/${project.artifactId}</imageName>
+					<dockerDirectory>src/main/docker</dockerDirectory>
+					<!-- serverId>docker-hub</serverId --> <!-- Identificador del registry de Docker -->
+         			<!--registryUrl>https://index.docker.io/v1/</registryUrl --> <!-- URL del registry de Docker -->
+         			<!-- forceTags>true</forceTags --> <!-- Tag de la imagen -->
+					<!--imageTags>
+           				<imageTag>${project.version}</imageTag>
+         			</imageTags-->
+					<resources>
+						<resource>
+							<targetPath>/</targetPath>
+							<directory>${project.build.directory}</directory>
+							<include>${project.build.finalName}.jar</include>
+						</resource>
+         			</resources>
+				</configuration>
+				<executions>
+         			<execution> <!-- Vinculamos a la fase package de maven, el goal docker:build que construye la imagen con el microservicio -->
+           				<id>build-image</id>
+           				<phase>package</phase>
+           				<goals>
+            	 			<goal>build</goal>
+           				</goals>
+         			</execution>
+         			<!--execution --> <!-- Vinculamos a la fase de install de maven, el goal docker:push que sube nuestra imagen al registro de docker -->
+           				<!-- id>push-image</id>
+           				<phase>install</phase>
+           				<goals>
+            	 			<goal>push</goal>
+           				</goals>
+           				<configuration>
+             				<imageName>${docker.image.prefix}/${project.artifactId}:${project.version}</imageName>
+           				</configuration>
+         			</execution -->
+       			</executions>
+				<dependencies>
+    				<dependency>
+      					<groupId>javax.activation</groupId>
+      					<artifactId>activation</artifactId>
+      					<version>1.1.1</version>
+    				</dependency>
+  				</dependencies>
+			</plugin>
+		</plugins>	
+	</build>
+
+</project>

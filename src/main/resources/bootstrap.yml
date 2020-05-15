@@ -1,0 +1,7 @@
+spring:  
+  application:
+    name: ejemplo-ms
+#  cloud:
+#    config:
+#      failFast: false
+#      uri: http://localhost:8888
